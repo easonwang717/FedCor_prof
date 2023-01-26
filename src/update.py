@@ -42,7 +42,7 @@ class LocalUpdate(object):
         # self.logger = logger
         self.trainloader, self.testloader = self.train_test(
             dataset, list(idxs))
-        self.device = 'cuda:'+args.gpu if args.gpu else 'cpu'
+        self.device = 'cuda:'+args.GPU if args.GPU else 'cpu'
         self.criterion = ce_criterion
         self.test_criterion = ce_criterion
         self.global_round = global_round
@@ -144,7 +144,7 @@ class LocalUpdate(object):
 
 
 def train_federated_learning(args,epoch,global_model,idxs_users,train_dataset,user_groups,verbose = False):
-    device = 'cuda:'+args.gpu if args.gpu else 'cpu'
+    device = 'cuda:'+args.GPU if args.GPU else 'cpu'
     local_weights = []
     for _ in range(args.num_users):
         local_weights.append(copy.deepcopy(global_model.state_dict()))
@@ -179,7 +179,7 @@ def train_federated_learning(args,epoch,global_model,idxs_users,train_dataset,us
     return sum(list_acc)/len(list_acc),list_loss
 
 def federated_train_all(args,global_model,train_dataset,user_groups):
-    device = 'cuda:'+args.gpu if args.gpu else 'cpu'
+    device = 'cuda:'+args.GPU if args.GPU else 'cpu'
     global_model.train()
     local_weights = []
     for idx in tqdm(range(args.num_users)):
@@ -192,7 +192,7 @@ def federated_train_all(args,global_model,train_dataset,user_groups):
     return np.array(local_weights)
 
 def federated_test_idx(args,global_model,idxs_users,train_dataset,user_groups):
-    device = 'cuda:'+args.gpu if args.gpu else 'cpu'
+    device = 'cuda:'+args.GPU if args.GPU else 'cpu'
     global_model.eval()
     list_acc, list_loss = [], []
     local_model = copy.deepcopy(global_model)
@@ -207,7 +207,7 @@ def federated_test_idx(args,global_model,idxs_users,train_dataset,user_groups):
 def federated_train_worker(args,global_model,idxs,train_dataset,user_groups,local_states,local_weights,epoch_global_losses,epoch_local_losses):
     if isinstance(idxs,int):
         idxs = [idxs,]
-    device = 'cuda:'+args.gpu if args.gpu else 'cpu'
+    device = 'cuda:'+args.GPU if args.GPU else 'cpu'
     for idx in idxs:
         local_model = copy.deepcopy(global_model)
         local_update = LocalUpdate(args=args, dataset=train_dataset,
@@ -227,7 +227,7 @@ def test_inference(args, model, test_dataset):
     model.eval()
     loss, total, correct = 0.0, 0.0, 0.0
 
-    device = 'cuda' if args.gpu else 'cpu'
+    device = 'cuda' if args.GPU else 'cpu'
     model.to(device)
     criterion = F.cross_entropy
     testloader = DataLoader(test_dataset, batch_size=128,

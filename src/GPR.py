@@ -251,7 +251,7 @@ class GPR(torch.nn.Module):
                 pdist = MultivariateNormal(loc = mu_p[posteriori_idx],
                                            covariance_matrix = sigma_p[posteriori_idx,:][:,posteriori_idx]+noise_scale*torch.eye(len(posteriori_idx)))
                 break
-            except RuntimeError:
+            except ValueError:
                 noise_scale*=10
         predict_loss = -pdist.log_prob(torch.tensor(data[posteriori_idx,1]).to(mu_p))
         predict_loss = predict_loss.detach().item()

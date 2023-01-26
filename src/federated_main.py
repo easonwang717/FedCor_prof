@@ -25,7 +25,7 @@ from utils import get_dataset, average_weights, exp_details,setup_seed
 from mvnt import MVN_Test
 import GPR
 from GPR import Kernel_GPR,TrainGPR
-
+#from scalene import scalene_profiler
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -35,8 +35,9 @@ from math import ceil
 
 
 if __name__ == '__main__':
+
     os.environ["OUTDATED_IGNORE"]='1'
-    torch.multiprocessing.set_start_method('spawn')
+    #torch.multiprocessing.set_start_method('spawn')
     start_time = time.time()
     # define paths
     path_project = os.path.abspath('..')
@@ -71,8 +72,8 @@ if __name__ == '__main__':
 
     
 
-    device = 'cuda:'+args.gpu if args.gpu else 'cpu'
-    if args.gpu:
+    device = 'cuda:'+args.GPU if args.GPU else 'cpu'
+    if args.GPU:
         torch.cuda.set_device(device)
     if gargs.seed is None or gargs.iid:
         gargs.seed = [None,]
@@ -282,6 +283,7 @@ if __name__ == '__main__':
             train_accuracy.append(sum(list_acc)/len(list_acc))
 
             # calculate the advantage in off-policy
+            # ?? advantage ??
             if gpr_idxs_users is not None and not args.gpr_selection:
                 rand_loss_decrease.append(np.sum((np.array(gt_global_losses[-1])-np.array(gt_global_losses[-2]))*weights))
                 rand_acc_improve.append(train_accuracy[-1]-train_accuracy[-2])
@@ -294,14 +296,14 @@ if __name__ == '__main__':
                                             np.expand_dims(np.array(gt_global_losses[-1])-np.array(gt_global_losses[-2]),1),
                                             np.ones([args.num_users,1])],1)
                 pred_idx = np.delete(list(range(args.num_users)),test_idx)
-                
+                ##--------- Predict Loss -------------------- 
                 predict_loss,mu_p,sigma_p = gpr.Predict_Loss(test_data,test_idx,pred_idx)
                 print("GPR Predict relative Loss:{:.4f}".format(predict_loss))
                 predict_losses.append(predict_loss)
                 
 
             
-
+            #scalene_profiler.start()
             # train and exploit GPR
             if args.gpr:
                 if epoch<=args.warmup and epoch>=args.gpr_begin:# warm-up
@@ -337,6 +339,7 @@ if __name__ == '__main__':
                     gpr.update_discount(idxs_users,args.discount)
                     
                 if epoch>=args.warmup:
+                    # -------------- GPR Selection ---------------------
                     gpr_idxs_users = gpr.Select_Clients(m,args.loss_power,args.epsilon_greedy,args.discount_method,weights,args.dynamic_C,args.dynamic_TH)
                     print("GPR Chosen Clients:",gpr_idxs_users)
                 
@@ -350,7 +353,7 @@ if __name__ == '__main__':
                     sigma_gt.append(np.cov(mvn_samples,rowvar=False,bias = True))
                     sigma.append(gpr.Covariance().clone().detach().numpy())
 
-                    
+            #scalene_profiler.stop()        
                 
                 
                 

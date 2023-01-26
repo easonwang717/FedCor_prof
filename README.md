@@ -53,6 +53,10 @@ python3 src/federated_main.py --gpu=0 --dataset=cifar --model=cnn --kernel_sizes
 ```shell
 python3 src/federated_main.py --gpu=0 --dataset=cifar --model=cnn --kernel_sizes 3 3 3 --num_filters 32 64 64 --mlp_layer 64 --epochs=2000 --num_user=100 --frac=0.05 --local_ep=5 --local_bs=50 --lr=0.01 --lr_decay=1.0 --optimizer=sgd --reg=3e-4 --iid=0 --unequal=0 --alpha=0.2 --verbose=1 --seed 1 2 3 4 5 --gpr --gpr_selection --discount_method=time --discount=0.9 --GPR_interval=50 --group_size=51 --GPR_gamma=0.97 --poly_norm=0 --warmup=20
 ```
+#### FedCor Test
+```shell
+python3 src/federated_main.py --GPU=0 --dataset=cifar --model=cnn --kernel_sizes 3 3 3 --num_filters 32 64 64 --mlp_layer 64 --epochs=100 --num_user=100 --frac=0.05 --local_ep=5 --local_bs=50 --lr=0.01 --lr_decay=1.0 --optimizer=sgd --reg=3e-4 --iid=0 --unequal=0 --alpha=0.2 --verbose=1 --seed 1 2 3 4 5 --gpr --gpr_selection --discount_method=time --discount=0.9 --GPR_interval=5 --group_size=51 --GPR_gamma=0.97 --poly_norm=0 --warmup=2
+```
 
 #### Pow-d
 
